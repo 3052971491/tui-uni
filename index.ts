@@ -1,6 +1,6 @@
 import { App } from "vue";
 
-const modules = import.meta.globEager("./**/*.vue");
+const modules = import.meta.globEager("./components/**/*.vue");
 
 const install = (app: App) => {
   Object.values(modules).forEach((element: any) => {
