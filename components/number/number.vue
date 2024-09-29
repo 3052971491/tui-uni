@@ -1,6 +1,6 @@
 <template>
 	<view class="uni-numbox">
-		<input ref="inputInstance" :class="{ 'uni-numbox--disabled': disabled }" :disabled="disabled" @focus="_onFocus" @blur="_onBlur" class="uni-numbox__value" type="number"
+		<input ref="inputInstance" :class="{ 'uni-numbox--disabled': disabled }" :focus="focused" :disabled="disabled" @focus="_onFocus" @blur="_onBlur" class="uni-numbox__value" type="number"
 			v-model="inputValue" :style="{background, color}" />
 	</view>
 </template>
@@ -60,7 +60,8 @@
 		},
 		data() {
 			return {
-				inputValue: 0
+				inputValue: 0,
+                focused: false,
 			};
 		},
 		watch: {
@@ -81,10 +82,12 @@
 		},
 		methods: {
             focus() {
-                this.$refs.inputInstance.focus();
+                this.focused = true;
+                // this.$refs.inputInstance.focus();
             },
             blur() {
-                this.$refs.inputInstance.blur();
+                this.focused = false;
+                // this.$refs.inputInstance.blur();
             },
 			_calcValue(type) {
 				if (this.disabled) {
