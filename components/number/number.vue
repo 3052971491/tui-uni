@@ -1,6 +1,6 @@
 <template>
 	<view class="uni-numbox">
-		<input ref="inputInstance" :disabled="disabled" @focus="_onFocus" @blur="_onBlur" class="uni-numbox__value" type="number"
+		<input ref="inputInstance" :class="{ 'uni-numbox--disabled': disabled }" :disabled="disabled" @focus="_onFocus" @blur="_onBlur" class="uni-numbox__value" type="number"
 			v-model="inputValue" :style="{background, color}" />
 	</view>
 </template>
