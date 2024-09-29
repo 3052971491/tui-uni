@@ -147,11 +147,13 @@
 				}
 				const scale = this._getDecimalScale();
 				this.inputValue = value.toFixed(String(scale).length - 1);
+                this.blur();
 				this.$emit("change", +this.inputValue);
 				this.$emit("input", +this.inputValue);
 				this.$emit("update:modelValue", +this.inputValue);
 			},
 			_onFocus(event) {
+                this.focus();
 				this.$emit('focus', event)
 			}
 		}
