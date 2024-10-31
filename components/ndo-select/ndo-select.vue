@@ -196,7 +196,7 @@ export default defineComponent({
   },
   watch: {
     innerValue: {
-      handler: debounce(function (val) {
+      handler: function (val) {
         if (val) {
           let params = {
             maxResultCount: 1,
@@ -216,7 +216,7 @@ export default defineComponent({
             this.localdata = result.items;
           });
         }
-      }, 500),
+      },
       immediate: true,
     },
   },
