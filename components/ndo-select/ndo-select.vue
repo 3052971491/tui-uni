@@ -84,10 +84,12 @@ export default defineComponent({
   name: "NdoSelect",
   mixins: [AppComponentBase],
   props: {
+    name: String,
     value: {
       type: [String, Number, Boolean],
       default: "",
     },
+    modelValue: [String, Number, Boolean],
     /**
      * 自定义查询接口
      * @description dataSource参数将不生效
@@ -129,9 +131,14 @@ export default defineComponent({
       default: "getNdoCombox",
     },
   },
-  emits: ["update:value", "change"],
+  model: {
+    prop: "modelValue",
+    event: "update:modelValue",
+  },
+  emits: ["update:value", "change", "input", "update:modelValue"],
   data() {
     return {
+      innerValue: "",
       defaultFieldNames: {
         id: "id",
         name: "name",
@@ -149,6 +156,26 @@ export default defineComponent({
       selectedRowKey: "",
       selectedRow: [],
     };
+  },
+  created() {
+    if (!this.value && this.value !== 0) {
+      this.innerValue = this.modelValue;
+    }
+    if (!this.modelValue && this.modelValue !== 0) {
+      this.innerValue = this.value;
+    }
+    this.form = this.getForm("uniForms");
+    this.formItem = this.getForm("uniFormsItem");
+    if (this.form && this.formItem) {
+      if (this.formItem.name) {
+        if (!this.is_reset) {
+          this.is_reset = false;
+          this.formItem.setValue(this.innerValue);
+        }
+        this.rename = this.formItem.name;
+        this.form.inputChildrens.push(this);
+      }
+    }
   },
   computed: {
     formatFieldValue() {
@@ -179,14 +206,6 @@ export default defineComponent({
     serverApiInstance() {
       return new CommonComboxServiceProxy(this.$apiUrl, this.$api);
     },
-    innerValue: {
-      set(val) {
-        this.$emit("update:value", val);
-      },
-      get() {
-        return this.value;
-      },
-    },
     formatFieldNames() {
       return {
         ...this.defaultFieldNames,
@@ -195,8 +214,19 @@ export default defineComponent({
     },
   },
   watch: {
+    value(newVal) {
+      this.innerValue = newVal;
+    },
+    modelValue(newVal) {
+      this.innerValue = newVal;
+    },
     innerValue: {
       handler: function (val) {
+        if (this.errMsg) this.errMsg = "";
+        if (this.form && this.formItem) {
+          this.is_reset = false;
+          this.formItem.setValue(val);
+        }
         if (val) {
           let params = {
             maxResultCount: 1,
@@ -216,11 +246,24 @@ export default defineComponent({
             this.localdata = result.items;
           });
         }
+        this.$emit("update:value", val);
+        this.$emit("update:modelValue", val);
       },
       immediate: true,
     },
   },
   methods: {
+    init() {},
+    getForm(name = "uniForms") {
+      let parent = this.$parent;
+      let parentName = parent.$options.name;
+      while (parentName !== name) {
+        parent = parent.$parent;
+        if (!parent) return false;
+        parentName = parent.$options.name;
+      }
+      return parent;
+    },
     fetchDataGoToFirst() {
       this.$refs.refreshRefresh.fetchDataGoToFirst();
     },
