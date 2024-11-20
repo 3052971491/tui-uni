@@ -216,9 +216,13 @@ export default defineComponent({
   watch: {
     value(newVal) {
       this.innerValue = newVal;
+      this.$emit("update:value", newVal);
+      this.$emit("update:modelValue", newVal);
     },
     modelValue(newVal) {
       this.innerValue = newVal;
+      this.$emit("update:value", newVal);
+      this.$emit("update:modelValue", newVal);
     },
     innerValue: {
       handler: function (val) {
@@ -246,8 +250,6 @@ export default defineComponent({
             this.localdata = result.items;
           });
         }
-        this.$emit("update:value", val);
-        this.$emit("update:modelValue", val);
       },
       immediate: true,
     },
@@ -296,9 +298,11 @@ export default defineComponent({
     handleItemClick(e, index) {
       const str = this.formatFieldValue(this.formatFieldNames.id, e);
       if (str === this.innerValue) return;
-      this.innerValue = str;
+      // this.innerValue = str;
       this.localdata = [e];
       this.toggle();
+      this.$emit("update:value", str);
+      this.$emit("update:modelValue", str);
       this.$emit("change", {
         value: str,
         selectRow: this.localdata,
@@ -313,9 +317,11 @@ export default defineComponent({
       this.showPicker = !this.showPicker;
     },
     handleClearClick() {
-      this.innerValue = "";
+      // this.innerValue = "";
       this.localdata = [];
       this.toggle();
+      this.$emit("update:value", '');
+      this.$emit("update:modelValue", '');
       this.$emit("change", {
         value: "",
         selectRow: this.localdata,
