@@ -184,7 +184,7 @@ export default defineComponent({
   },
   watch: {
     innerValue2: {
-      handler: debounce(function (val: any[]) {
+      handler: function (val: any[]) {
         if (val.length > 0) {
           let params = {
             maxResultCount: 1,
@@ -206,7 +206,7 @@ export default defineComponent({
             this.localdata2 = cloneDeep(result.items);
           });
         }
-      }, 500),
+      },
       immediate: true,
     },
   },
