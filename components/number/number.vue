@@ -1,7 +1,7 @@
 <template>
 	<view class="uni-numbox">
 		<input ref="inputInstance" :class="{ 'uni-numbox--disabled': disabled }" :focus="focused" :disabled="disabled" @focus="_onFocus" @blur="_onBlur" class="uni-numbox__value" type="number"
-			v-model="inputValue" :style="{background, color}" />
+			v-model="inputValue" :style="{background, color}" :placeholder="placeholder" />
 	</view>
 </template>
 <script>
@@ -27,11 +27,11 @@
 		props: {
 			value: {
 				type: [Number, String],
-				default: 1
+				default: 0
 			},
 			modelValue: {
 				type: [Number, String],
-				default: 1
+				default: 0
 			},
 			min: {
 				type: Number,
@@ -39,7 +39,7 @@
 			},
 			max: {
 				type: Number,
-				default: 100
+				default: 99999999
 			},
 			step: {
 				type: Number,
@@ -47,7 +47,7 @@
 			},
 			background: {
 				type: String,
-				default: '#f5f5f5'
+				default: '#F7F8FA'
 			},
 			color: {
 				type: String,
@@ -56,6 +56,10 @@
 			disabled: {
 				type: Boolean,
 				default: false
+			},
+			placeholder: {
+				type: String,
+				default: ''
 			}
 		},
 		data() {
@@ -224,5 +228,15 @@
 		/* #ifdef H5 */
 		cursor: not-allowed;
 		/* #endif */
+		.uni-input-placeholder {
+    		color: rgb(201, 205, 212);
+
+    	}
 	}
+
+	.uni-input-placeholder {
+		color: rgb(29, 33, 41);
+    	font-size: 14px;
+    	opacity: 0.3;
+    }
 </style>
