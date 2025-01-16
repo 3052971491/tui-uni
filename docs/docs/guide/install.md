@@ -4,7 +4,7 @@
 
 ### 1、获取安装包
 
-```
+```sh
 cd ./src/shard
 
 git clone https://github.com/3052971491/tui-uni.git
