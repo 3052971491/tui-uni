@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   base: '/',
   title: 'Tui Uni',
-  description: '一款高效的低代码引擎',
+  description: '一个 Uniapp 组件库',
   lastUpdated: true,
   // cleanUrls: true,
   head: [
@@ -26,7 +26,7 @@ export default defineConfig({
 
     // 链接
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/3052971491/hex-lowcode-engine-starter' }
+      { icon: 'github', link: 'https://github.com/3052971491/tui-uni' }
     ],
 
     // 底部
@@ -47,7 +47,6 @@ export default defineConfig({
   },
   locales: {
     root: { label: '简体中文' },
-    en: { label: 'English', link: 'https://www.zczchen.top/hex-lowcode-engine-starter/' },
   },
 })
 
