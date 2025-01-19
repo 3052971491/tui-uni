@@ -32,6 +32,10 @@ export default defineComponent({
       type: Object,
       default: {},
     },
+    auto: {
+      type: Boolean,
+      default: true,
+    }
   },
   data() {
     return {
@@ -41,6 +45,7 @@ export default defineComponent({
       },
       loading: false,
       upOptions: {
+        auto: this.auto,
         textLoading: this.l('LoadingThreeDot'),
         empty: {
           use: true,
@@ -48,6 +53,7 @@ export default defineComponent({
         }
       },
       downOptions: {
+        auto: this.auto,
         textInOffset: this.l('PullToRefresh'),
         textOutOffset: this.l('ReleaseUpdate'),
         textLoading: this.l('LoadingThreeDot'),
