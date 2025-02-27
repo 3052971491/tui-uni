@@ -27,6 +27,7 @@
             @keyup.enter="fetchDataGoToFirst()"
           />
         </uni-forms-item>
+        <slot name="search-after"></slot>
       </uni-forms>
       <view class="list">
         <t-pull-refresh
