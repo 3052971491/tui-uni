@@ -39,6 +39,7 @@ export default defineComponent({
 .t-textarea {
   :deep(.uni-easyinput__content-textarea) {
     min-height: 63px;
+    background: initial;
   }
 }
 </style>
