@@ -23,7 +23,7 @@ export default defineComponent({
       default: "",
     },
   },
-  emits: ["update:value"],
+  emits: ["update:value", "change"],
   computed: {
     innerValue: {
       get() {
@@ -31,6 +31,7 @@ export default defineComponent({
       },
       set(newValue) {
         this.$emit("update:value", newValue || "");
+        this.$emit("change", newValue || "");
       },
     },
   },
