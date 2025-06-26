@@ -1,90 +1,64 @@
 <template>
-	<view class="uni-numbox">
-		<input ref="inputInstance" :class="{ 'uni-numbox--disabled': disabled }" :focus="focused" :disabled="disabled" @focus="_onFocus" @blur="_onBlur" class="uni-numbox__value" type="number"
-			v-model="inputValue" :style="{background, color}" :placeholder="placeholder" />
-	</view>
+    <view class="uni-numbox">
+        <input ref="inputInstance" :class="{ 'uni-numbox--disabled': disabled }" :focus="focused" :disabled="disabled" @focus="_onFocus" @blur="_onBlur" class="uni-numbox__value" type="number"
+            v-model="inputValue" :style="{background, color}" :placeholder="placeholder" />
+    </view>
 </template>
 <script>
-	/**
-	 * NumberBox 数字输入框
-	 * @description 带加减按钮的数字输入框
-	 * @tutorial https://ext.dcloud.net.cn/plugin?id=31
-	 * @property {Number} value 输入框当前值
-	 * @property {Number} min 最小值
-	 * @property {Number} max 最大值
-	 * @property {Number} step 每次点击改变的间隔大小
-	 * @property {String} background 背景色
-	 * @property {String} color 字体颜色（前景色）
-	 * @property {Boolean} disabled = [true|false] 是否为禁用状态
-	 * @event {Function} change 输入框值改变时触发的事件，参数为输入框当前的 value
-	 * @event {Function} focus 输入框聚焦时触发的事件，参数为 event 对象
-	 * @event {Function} blur 输入框失焦时触发的事件，参数为 event 对象
-	 */
-
-	export default {
-		name: "Number",
-		emits: ['change', 'input', 'update:modelValue', 'blur', 'focus'],
-		props: {
-			value: {
-				type: [Number, String],
-				default: 0
-			},
-			modelValue: {
-				type: [Number, String],
-				default: 0
-			},
-			min: {
-				type: Number,
-				default: 0
-			},
-			max: {
-				type: Number,
-				default: 99999999
-			},
-			step: {
-				type: Number,
-				default: 1
-			},
-			background: {
-				type: String,
-				default: '#F7F8FA'
-			},
-			color: {
-				type: String,
-				default: '#333'
-			},
-			disabled: {
-				type: Boolean,
-				default: false
-			},
-			placeholder: {
-				type: String,
-				default: ''
-			}
-		},
-		data() {
-			return {
-				inputValue: 0,
+    export default {
+        name: "Number",
+        emits: ['change', 'input', 'update:modelValue', 'blur', 'focus'],
+        props: {
+            modelValue: {
+                type: [Number, String],
+                default: 0
+            },
+            min: {
+                type: Number,
+                default: 0
+            },
+            max: {
+                type: Number,
+                default: 99999999
+            },
+            step: {
+                type: Number,
+                default: 1
+            },
+            background: {
+                type: String,
+                default: '#F7F8FA'
+            },
+            color: {
+                type: String,
+                default: '#333'
+            },
+            disabled: {
+                type: Boolean,
+                default: false
+            },
+            placeholder: {
+                type: String,
+                default: ''
+            }
+        },
+        data() {
+            return {
+                inputValue: this._formatValue(this.modelValue),
                 focused: false,
-			};
-		},
-		watch: {
-			value(val) {
-				this.inputValue = +val;
-			},
-			modelValue(val) {
-				this.inputValue = +val;
-			}
-		},
-		created() {
-			if (this.value === 1) {
-				this.inputValue = +this.modelValue;
-			}
-			if (this.modelValue === 1) {
-				this.inputValue = +this.value;
-			}
-		},
-		methods: {
+            };
+        },
+        watch: {
+            modelValue(val) {
+                // 当外部值变化时更新内部值
+                this.inputValue = this._formatValue(val);
+            }
+        },
+        created() {
+            // 初始化时使用modelValue
+            this.inputValue = this._formatValue(this.modelValue);
+        },
+        methods: {
             focus() {
                 this.focused = true;
                 // this.$refs.inputInstance.focus();
@@ -93,75 +67,90 @@
                 this.focused = false;
                 // this.$refs.inputInstance.blur();
             },
-			_calcValue(type) {
-				if (this.disabled) {
-					return;
-				}
-				const scale = this._getDecimalScale();
-				let value = this.inputValue * scale;
-				let step = this.step * scale;
-				if (type === "minus") {
-					value -= step;
-					if (value < (this.min * scale)) {
-						return;
-					}
-					if (value > (this.max * scale)) {
-						value = this.max * scale
-					}
-				}
+            _calcValue(type) {
+                if (this.disabled) {
+                    return;
+                }
+                const scale = this._getDecimalScale();
+                let value = parseFloat(this.inputValue) * scale;
+                let step = this.step * scale;
+                
+                if (type === "minus") {
+                    value -= step;
+                    if (value < (this.min * scale)) {
+                        return;
+                    }
+                }
 
-				if (type === "plus") {
-					value += step;
-					if (value > (this.max * scale)) {
-						return;
-					}
-					if (value < (this.min * scale)) {
-						value = this.min * scale
-					}
-				}
+                if (type === "plus") {
+                    value += step;
+                    if (value > (this.max * scale)) {
+                        return;
+                    }
+                }
 
-				this.inputValue = (value / scale).toFixed(String(scale).length - 1);
-				this.$emit("change", +this.inputValue);
-				// TODO vue2 兼容
-				this.$emit("input", +this.inputValue);
-				// TODO vue3 兼容
-				this.$emit("update:modelValue", +this.inputValue);
-			},
-			_getDecimalScale() {
-
-				let scale = 1;
-				// 浮点型
-				if (~~this.step !== this.step) {
-					scale = Math.pow(10, String(this.step).split(".")[1].length);
-				}
-				return scale;
-			},
-			_onBlur(event) {
-				this.$emit('blur', event)
-				let value = event.detail.value;
-				if (isNaN(value)) {
-					this.inputValue = this.min;
-					return;
-				}
-				value = +value;
-				if (value > this.max) {
-					value = this.max;
-				} else if (value < this.min) {
-					value = this.min;
-				}
-				const scale = this._getDecimalScale();
-				this.inputValue = value.toFixed(String(scale).length - 1);
+                this.inputValue = (value / scale).toFixed(String(scale).length - 1);
+                this._emitValueChanged();
+            },
+            _getDecimalScale() {
+                let scale = 1;
+                // 浮点型
+                if (~~this.step !== this.step) {
+                    scale = Math.pow(10, String(this.step).split(".")[1].length);
+                }
+                return scale;
+            },
+            _onBlur(event) {
+                this.$emit('blur', event)
+                let value = event.detail.value;
+                
+                if (value === '' || isNaN(value)) {
+                    this.inputValue = this.min.toString();
+                } else {
+                    value = parseFloat(value);
+                    if (value > this.max) {
+                        value = this.max;
+                    } else if (value < this.min) {
+                        value = this.min;
+                    }
+                    const scale = this._getDecimalScale();
+                    this.inputValue = value.toFixed(String(scale).length - 1);
+                }
+                
                 this.blur();
-				this.$emit("change", +this.inputValue);
-				this.$emit("input", +this.inputValue);
-				this.$emit("update:modelValue", +this.inputValue);
-			},
-			_onFocus(event) {
+                this._emitValueChanged();
+            },
+            _onFocus(event) {
                 this.focus();
-				this.$emit('focus', event)
-			}
-		}
-	};
+                this.$emit('focus', event)
+            },
+            _formatValue(value) {
+                // 格式化值为字符串，确保是有效的数字格式
+                if (value === '' || value === null || value === undefined) {
+                    return this.min.toString();
+                }
+                
+                const num = parseFloat(value);
+                
+                if (isNaN(num)) {
+                    return this.min.toString();
+                }
+                
+                // 确保值在 min 和 max 范围内
+                const validValue = Math.min(Math.max(num, this.min), this.max);
+                const scale = this._getDecimalScale();
+                
+                return validValue.toFixed(String(scale).length - 1);
+            },
+            _emitValueChanged() {
+                // 统一触发值变更事件
+                const numericValue = parseFloat(this.inputValue);
+                this.$emit("change", numericValue);
+                this.$emit("input", numericValue);
+                this.$emit("update:modelValue", numericValue);
+            }
+        }
+    };
 </script>
 <style lang="scss" scoped>
 	$box-height: 36px;
